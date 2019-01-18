@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{803FD0C6-D64E-4E16-9DC3-1DAEC859A3D2}") = "WebScalesESP32", "WebScalesESP32.vgdbproj", "{A2043005-2C94-4863-B486-869AA9514D42}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ESP32 Dev Module = Debug|ESP32 Dev Module
+		Release|ESP32 Dev Module = Release|ESP32 Dev Module
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2043005-2C94-4863-B486-869AA9514D42}.Debug|ESP32 Dev Module.ActiveCfg = Debug|ESP32 Dev Module
+		{A2043005-2C94-4863-B486-869AA9514D42}.Debug|ESP32 Dev Module.Build.0 = Debug|ESP32 Dev Module
+		{A2043005-2C94-4863-B486-869AA9514D42}.Release|ESP32 Dev Module.ActiveCfg = Release|ESP32 Dev Module
+		{A2043005-2C94-4863-B486-869AA9514D42}.Release|ESP32 Dev Module.Build.0 = Release|ESP32 Dev Module
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47C8E8CC-2192-4CF7-BB0C-C22B2D495D32}
+	EndGlobalSection
+EndGlobal

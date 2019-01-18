@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no' />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <title>Батарея</title>
+    <link rel="stylesheet" type="text/css" href="global.css">
+    <style>
+        table {
+            width: auto;
+            border-collapse: collapse;
+            margin-right: 5px;
+        }
+        input:focus {
+            background: #FA6;
+            outline: none;
+        }
+        input,
+        select {
+            width: 100%;
+            text-align: right;
+            font-size: 18px;
+        }
+        #id_cvl{
+            background: #96a6c1;
+        }
+    </style>
+    <script>
+        var d = document,w=null,map = new Map();
+
+        function validate(form) {
+            var e = form.elements;
+            if(e.bmax.disabled){
+                e.bmax.disabled = false;
+                e.bmin.disabled = false;
+                e.sub.value = "СОХРАНИТЬ";
+                return false;
+            }
+            if (map.get(e.bmax) === e.bmax.value && map.get(e.bmin) === e.bmin.value){
+                alert("Ошибка. Попытка сохранения старых значений");
+                e.bmax.disabled = true;
+                e.bmin.disabled = true;
+                e.sub.value = "ИЗМЕНИТЬ";
+                return false;
+            }
+            if (e.bmax.value <= e.bmin.value){
+                alert("Ошибка. Заряд максимальный должен быть больше минимального");
+                e.bmax.value = "";
+                e.bmax.focus();
+                return false;
+            }return true;
+        }
+
+        function ScalesSocket(h, p,fo,fm, fe) {
+            var host = h,protocol = p,tw,ts, ws;
+            this.snd = function(c) {
+                ws.send(c);
+            };
+            this.openSocket = function() {
+                ws = new WebSocket(host, protocol);
+                ws.onopen = function() {
+                    fo();
+                };
+                ws.onclose = function() {
+                    fe();
+                };
+                ws.onerror = function() {
+                    ws.close();
+                    fe();
+                };
+                ws.onmessage = function(e) {
+                    fm(JSON.parse(e.data));
+                }
+            };
+        }
+
+        function parseCommand(e){
+            if (e.hasOwnProperty('cmd')) {
+                switch (e.cmd) {
+                    case 'binfo':
+                        for (s in e) {
+                            try {
+                                let _e = d.getElementById(s);
+                                _e.value = e[s].toFixed(1);
+                                map.set(_e,_e.value);
+                            } catch (e) {}
+                        }
+                        d.body.style.visibility = 'visible';
+                        break;
+                }
+            }
+        }
+
+        function error(){
+            if (confirm('Ошибка соединения. Перегрузить?')){
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            }else {
+                window.location.replace('/');
+            }
+        }
+
+        window.onload = function() {
+            w = new ScalesSocket('ws://' + d.location.host + '/ws', ['arduino'],function(){
+                w.snd('{"cmd":"binfo"}');
+            }, parseCommand, function() {
+                error();
+            });
+            w.openSocket();
+        };
+    </script>
+</head>
+
+<body style='visibility: hidden'><a href='/settings.html'><img src='und.png' alt="&lt;" class='btn btn--s btn--blue'></a>&nbsp;&nbsp;<strong>БАТАРЕЯ</strong>
+<hr><span style='font-size: small; font-weight: bold'>
+    <hr>
+      <fieldset>
+
+            <summary>ЗНАЧЕНИЯ БАТАРЕИ</summary>
+            <br>
+            <form id="id_form" onsubmit="return validate(this)" method='POST'>
+              <table>
+                    <tr>
+                        <td>Текущее напряжение вольт:</td>
+                        <td><input type="number" id='id_cvl' disabled></td>
+                    </tr>
+                    <tr>
+                        <td>максимальный заряд вольт:</td>
+                        <td>
+                            <input type="number" required step=0.1 id='id_max' name='bmax' disabled> </td>
+                    </tr>
+                    <tr>
+                        <td>минимальный заряд вольт:</td>
+                        <td>
+                            <input type='number' required step=0.1 id='id_min' name='bmin' disabled> </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input id="id_sub" type='submit' name='sub' value='ИЗМЕНИТЬ' /> </td>
+                    </tr>
+
+              </table>
+            </form>
+
+    </fieldset>
+    </span>
+<hr>
+<footer align='center'>2018 © Powered by www.scale.in.ua</footer>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name="theme-color" content="#abc0df"/>
+    <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no' />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <title>Батарея</title>
+    <style>
+      body{
+        font-family: Arial, sans-serif;
+        width: 330px;
+        height: auto;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      #id_alr_msg{
+          color: white;
+          font-size: 20px;
+        }
+      #id_alr{
+            position: absolute;
+            top: 10%;
+            width: 300px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #ff7c00;
+      }
+    </style>
+    <script>
+     d = document; 
+      function f() {
+        d.getElementById('id_alr').style.display = 'none';
+      }
+    </script>
+</head>
+<body>
+   <div align='right' id='id_alr'>
+      <p id='id_alr_msg'>ВЕСЫ ВЫКЛЮЧЕНЫ!<wbr>Батарея разряжена!!! Поменяйте батарею.</p>
+	    <input class="btn--s" type='button' onclick="f()" id='id_alr_btn' value='Ok'>
+    </div>
+</body>
+
+</html>

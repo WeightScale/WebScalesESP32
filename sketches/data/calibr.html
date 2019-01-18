@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name="theme-color" content="#abc0df"/>
+    <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no' />
+    <meta http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate' />
+    <meta http-equiv='Pragma' content='no-cache' />
+    <title>Калибровка</title>
+    <link rel="stylesheet" type="text/css" href="global.css">
+    <style>
+        #wt_id {
+            display: inline;
+            background: #fff;
+            font-size: 28px;
+            font-family: Arial, sans-serif;
+            color: #618ad2;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            text-align: right;
+            font-size: 18px;
+            height: auto;
+        }
+
+        input[type='submit'] {
+            width: auto;
+        }
+
+        select {
+            width: 100%;
+            text-align-last: right;
+            font-size: 18px;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+    </style>
+    <script>
+        let weight,cz,cw,cs,w,d = document;
+
+        function SS(h, p, fm, fe) {
+            let tw, ws;
+            this.snd = function(c) {
+                ws.send(c);
+            };
+            this.create = function() {
+                this.oS();
+            };
+            this.close = function() {
+                ws.close();
+            };
+            this.wT = function() {
+                clearTimeout(tw);
+                tw = setTimeout(function() {
+                    w.create();
+                }, 7000);
+            };
+            this.oS = function() {
+                ws = new WebSocket(h, p);
+                ws.onopen = function () {
+                    d.body.style.visibility = 'visible';
+                };
+                ws.onclose = function() {
+                    fe();
+                };
+                ws.onerror = function() {
+                    fe();
+                };
+                ws.onmessage = function(e) {
+                    fm(JSON.parse(e.data));
+                }
+
+            };
+        }
+
+        function go() {
+            d.getElementById('wt_id').innerHTML = '---';
+        }
+
+        function setMax() {
+            var f = new FormData(d.getElementById('form_c_id'));
+            f.append('update', true);
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState === 4) {
+                    if (r.responseText !== null) {
+                        cz = d.getElementById('form_zero');
+                        if(!cz.disabled){                            
+                            if (cz.style.display === "none") {
+                                d.getElementById("id_bs").value = 'ОБНОВИТЬ';
+                                cz.style.display = "table";
+                                setupWeight();
+                            }
+                        }
+                    }
+                }
+            };
+            r.open('POST', 'calibr.html', true);
+            r.send(f);
+        }
+
+        function setZero() {
+            let r = new XMLHttpRequest();
+            let f = new FormData();
+            f.append('zero', true);
+            f.append('weightCal', '0');
+            r.onreadystatechange = function() {
+                if (r.readyState === 4 && r.status === 200) {
+                    if (r.responseText !== null) {
+                        cz.disabled = true;
+                        cw=d.getElementById('form_weight');
+                        cw.style.display = "table";
+                    }
+                }
+            };
+            r.open('POST', 'calibr.html', true);
+            r.send(f);
+        }
+
+        function setWeight() {
+            var fd = new FormData();
+            var w = parseFloat(d.getElementById('id_cal_wt').value) + parseFloat(d.getElementById('gr_id').value);
+            fd.append('weightCal', w.toString());
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState === 4) {
+                    if (r.status === 200) {
+                        if (r.responseText !== null) {
+                            if (d.getElementById('form_seal').style.display === "none") {
+                                cs=d.getElementById('form_seal');
+                                cs.style.display = "table";
+                            }
+                        }
+                    } else if (r.status === 400) {
+                        alert(r.responseText);
+                    }
+                }
+            };
+            r.open('POST', 'calibr.html', true);
+            r.send(fd);
+        }
+
+        function setSeal() {
+            let r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState === 4){
+                    if(r.status === 200) {
+                        alert('Номер пломбы: ' + this.responseText);
+                        window.location.replace('/');
+                    }else if (r.status === 400) {
+                        alert(r.responseText);
+                        window.location.replace('/calibr.html');
+                    }
+                }
+            };
+            r.open('GET', '/sl', true);
+            r.send(null);
+        }
+
+        function GetSettings() {
+            let r = new XMLHttpRequest();
+            r.overrideMimeType('application/json');
+            r.onreadystatechange = function() {
+                if (r.readyState === 4 && r.status === 200) {
+                    try {
+                        let j = JSON.parse(r.responseText.replace(/NaN/g, 'null'));
+                        for (let e in j) {
+                            try {
+                                if (d.getElementById(e) !== null) {
+                                    if (d.getElementById(e).type === 'checkbox') {
+                                        d.getElementById(e).checked = j[e];
+                                    } else d.getElementById(e).value = j[e];
+                                }
+                            } catch (e) {}
+                        }
+                    } catch (e) {
+                        alert(e.toString());
+                    }
+                    d.body.style.visibility = 'visible';
+                }
+            };
+            r.open('GET', '/cdate.json', true);
+            r.send(null);
+        }
+
+        function saveValue() {
+            var f = new FormData(d.getElementById('form_c_id'));
+            f.append('update', true);
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState === 4) {
+                    if (r.status === 200) window.open('/', '_self');
+                    else if (r.status === 400) {
+                        if (confirm('Настройки не изменились. Выйти?')) {
+                            window.open('/', '_self');
+                        }
+                    }
+                }
+            };
+            r.onerror = function() {
+                alert('Ошибка');
+            };
+            r.open('POST', 'calibr.html', true);
+            r.send(f);
+        }
+
+        function getWeight() {
+            w = new SS('ws://' + d.location.host + '/ws', ['arduino'], handleWeight, function() {
+                go();
+                w.oS();
+            });
+            w.oS();
+        }
+
+        function calculate() {
+            let dif = weight - parseFloat(d.getElementById('id_cal_wt').value);
+            dif = parseFloat(d.getElementById('gr_id').value) / dif;
+            dif = parseFloat(d.getElementById('id_cal_wt').value) * dif;
+            d.getElementById('id_cal_wt').value = dif.toFixed(d.getElementById('ac_id').value);
+            setWeight();
+        }
+
+        function handleWeight(c) {
+            if (c.hasOwnProperty('cmd')) {
+                switch (c.cmd) {
+                    case 'wt':
+                        weight = c.w.toFixed(c.a);
+                        d.getElementById('wt_id').innerHTML = weight;
+                        try {
+                            cs.disabled = (c.s > 0);
+                        } catch (e) {}
+                        if (c.s) {
+                            d.getElementById('wt_id').setAttribute('style', 'background: #C4C4C4;');
+                        } else {
+                            d.getElementById('wt_id').setAttribute('style', 'background: #fff;');
+                        }
+                        try {
+                            var dif_gr = parseFloat(d.getElementById('id_cal_wt').value) + parseFloat(d.getElementById('gr_id').value);
+                            dif_gr -= weight;
+                            d.getElementById('dif_gr_id').innerHTML = dif_gr.toFixed(d.getElementById('ac_id').value);
+                        } catch (e) {}
+                        w.wT();
+                        break;
+                }
+            }
+        }
+
+        function setupWeight() {
+            getWeight();
+        }
+        window.onload = function() {
+            GetSettings();
+        };
+    </script>
+</head>
+
+<body style='visibility: hidden'><a href='/settings.html'><img src='und.png' alt="&lt;" class='btn btn--s btn--blue'></a>&nbsp;&nbsp;<strong>КАЛИБРОВКА ВЕСА</strong>
+<hr>
+<fieldset id='form_max'>
+    <legend>Общии настройки</legend>
+    <form id='form_c_id' action='javascript:setMax()'>
+        <table>
+            <tr>
+                <td>Точность измерения</td>
+                <td>
+                    <select id='ac_id' name='weightAccuracy' title='Знак после запятой'>
+                        <option name='0' value='0'>0</option>
+                        <option name='0.0' value='1'>0.0</option>
+                        <option name='0.00' value='2'>0.00</option>
+                        <option name='0.000' value='3'>0.000</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Шаг измерения</td>
+                <td>
+                    <select id='st_id' name='weightStep' title='Дискретность измерения'>
+                        <option name='шаг 1' value='1'>1</option>
+                        <option name='шаг 2' value='2'>2</option>
+                        <option name='шаг 5' value='5'>5</option>
+                        <option name='шаг 10' value='10'>10</option>
+                        <option name='шаг 20' value='20'>20</option>
+                        <option name='шаг 50' value='50'>50</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Кол-во измерений</td>
+                <td>
+                    <select id='av_id' name='weightAverage' title='Измерение АЦП'>
+                        <option name='одно' value='1'>ОДИН</option>
+                        <option name='два' value='2'>ДВА</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Фильтр</td>
+                <td>
+                    <select id='fl_id' name='weightFilter' title='Фильтр. Меньше значение больше фильтрация'>
+                        <option name='5%' value='5'>5 %</option>
+                        <option name='10%' value='10'>10 %</option>
+                        <option name='20%' value='20'>20 %</option>
+                        <option name='30%' value='30'>30 %</option>
+                        <option name='40%' value='40'>40 %</option>
+                        <option name='50%' value='50'>50 %</option>
+                        <option name='60%' value='60'>60 %</option>
+                        <option name='70%' value='70'>70 %</option>
+                        <option name='80%' value='80'>80 %</option>
+                        <option name='90%' value='90'>90 %</option>
+                        <option name='100%' value='100'>100 %</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>НВП</td>
+                <td>
+                    <input title='Максимальный вес' type='number' min='1' max='100000' id='mw_id' name='weightMax' placeholder='Найбольший предел'> </td>
+            </tr>
+            <tr>
+                <td><a href='javascript:saveValue();'>сохранить и выйти</a></td>
+                <td>
+                    <input id='id_bs' type='submit' value='ДАЛЬШЕ >>' /> </td>
+            </tr>
+        </table>
+    </form>
+</fieldset>
+<br>
+<fieldset>
+    <details>
+        <summary>Авторизация для калибровки</summary>
+        <form method='POST'>
+            <table>
+                <tr>
+                    <td>ИМЯ:</td>
+                    <td>
+                        <input id='us_id' name='user' placeholder='имя админ'> </td>
+                </tr>
+                <tr>
+                    <td>ПАРОЛЬ:</td>
+                    <td>
+                        <input type='password' id='ps_id' name='pass' placeholder='пароль админ'> </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type='submit' value='СОХРАНИТЬ' /> </td>
+                </tr>
+            </table>
+        </form>
+    </details>
+</fieldset>
+<br>
+<fieldset id='form_zero' style='display: none'>
+    <legend>Нулевой вес</legend>
+    <form action='javascript:setZero()'><p>Перед установкой убедитесь что весы не нагружены.</p>
+        <input type='submit' value='УСТАНОВИТЬ НОЛЬ'/>
+    </form>
+    <br>
+    <div id='wt_id'>---</div>
+</fieldset>
+<fieldset id='form_weight' style='display: none'>
+    <legend>Калиброваный вес</legend>
+    <form action='javascript:setWeight()'><p>Перед установкой весы нагружаются контрольным весом. Дать некоторое время для стабилизации.Значение вводится с точностью которое выбрано в пункте Точность измерения.</p>
+        <table>
+            <tr>
+                <td>ГИРЯ:</td><td><input id='gr_id' value='0' type='number' step='any' required placeholder='Калиброваная гиря'/></td>
+            </tr>
+            <tr>
+                <td>ГРУЗ:</td><td><input id='id_cal_wt' value='0' type='number' step='any' title='Введите значение веса установленого на весах' max='100000' required placeholder='Калиброваный вес'/></td>
+            </tr>
+            <tr>
+                <td>ОШИБКА:</td><td><div id='dif_gr_id'></div></td>
+            </tr>
+            <tr>
+                <td><input type='submit' value='УСТАНОВИТЬ'/></td><td><a href='javascript:calculate();'>подобрать</a></td>
+            </tr>
+        </table>
+    </form>
+</fieldset>
+<fieldset id='form_seal' style='display: none'>
+    <legend>Пломбировка</legend>
+    <form action='javascript:setSeal()'><p>Сохранение процесса калибровки. Данные калибровки сохраняются в память весов.</p>
+        <input type='submit' value='ОПЛОМБИРОВАТЬ'/>
+    </form>
+</fieldset>
+<footer align='center'>2018 © Powered by www.scale.in.ua</footer>
+</body>
+</html>

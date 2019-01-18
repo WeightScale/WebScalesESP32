@@ -1,0 +1,16 @@
+{
+  "short_name": "ВЕСЫ",
+  "name": "www.scale.in.ua",
+  "icons": [
+    {
+      "src": "/scales.png",
+      "type": "image/png",
+      "sizes": "52x52"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#abc0df",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#abc0df"
+}
