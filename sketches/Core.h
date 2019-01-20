@@ -1,4 +1,3 @@
-
 #ifndef _CORE_h
 #define _CORE_h
 #include "webconfig.h"
@@ -30,14 +29,14 @@ extern TaskController taskController;		/*  */
 extern Task taskBlink;								/*  */
 extern Task taskConnectWiFi;
 extern Task taskWeight;
-extern void connectWifi();
+extern void connectWifi(bool recconect = true);
 
 
 
 class CoreClass : public AsyncWebHandler{
 	private:
 		settings_t * _settings;
-	
+		cloud_t * _cloud;	
 		String _hostname;
 		String _username;
 		String _password;
@@ -63,7 +62,7 @@ class CoreClass : public AsyncWebHandler{
 		bool saveEvent(const String&, const String&);
 		bool eventToServer(const String&, const String&, const String&);
 		String getHash(const int, const String&, const String&, const String&);
-		int getPin(){return _settings->hostPin;};
+		int getPin(){return _cloud->hostPin;};
 		String& getHostname() { return _hostname; };
 		
 		bool isAuto(){return _settings->autoIp;};		

@@ -14,13 +14,19 @@ typedef struct {
 	char scaleSubnet[16];
 	char wSSID[33];
 	char wKey[33];
-	char apSSID[16];
+	char apSSID[16];		
+} settings_t;
+
+typedef struct {	
 	char hostUrl[0xff];
 	int hostPin;
-	int time_off;
+	int time_off;	
+} cloud_t;
+
+typedef struct {	
 	int bat_max;
 	int bat_min;
-} settings_t;
+} battery_t;
 
 typedef struct {
 	bool rate;
@@ -40,6 +46,8 @@ class CoreMemoryClass{
 	public:
 	struct MyEEPROMStruct {
 		settings_t settings;
+		cloud_t cloud;
+		battery_t battery;
 		t_scales_value scales_value;
 	} eeprom;
 

@@ -10,9 +10,13 @@
 #include "Scale.h"
 #include "Battery.h"
 
+extern "C" {
+#include <esp_wifi.h>
+}
 
 using namespace std;
 using namespace std::placeholders;
+
 
 
 void onStationModeConnected(WiFiEvent_t event, WiFiEventInfo_t info);
@@ -21,26 +25,21 @@ void onScanResultDone(WiFiEvent_t event, WiFiEventInfo_t info);
 
 
 void takeWeight();
-void connectWifi();
 void connectNetwork(int networksFound);
 void shutDown();
 
 //
 TaskController taskController = TaskController(); /*  */
-Task taskConnectWiFi(connectWifi, 30000); /* Пытаемся соедениться с точкой доступа каждые 30 секунд */
+Task taskConnectWiFi([](){
+	connectWifi(true);
+}, 30000); /* Пытаемся соедениться с точкой доступа каждые 30 секунд */
 Task taskWeight(takeWeight, 200);
 
 //#define USE_SERIAL Serial
 
 void setup(){
-/*#if POWER_PLAN
-	pinMode(EN_NCP, OUTPUT);
-	digitalWrite(EN_NCP, HIGH);
-#endif*/ 
-	Serial.begin(115200);
-	/*while (digitalRead(PWR_SW) == HIGH){
-		delay(100);
-	};*/
+	//Serial.begin(921600);
+	
 	CoreMemory.init();
 	BLINK = new BlinkClass();
 	BATTERY = new BatteryClass();	
@@ -58,7 +57,7 @@ void setup(){
 	browserServer.begin();
 	Scale.setup(&browserServer);
 	taskController.add(&taskConnectWiFi);
-	connectWifi();
+	connectWifi(false);
 	taskController.add(BLINK);
 	taskController.add(&taskWeight);
 	/* If battery discharged start timer for shutdown*/
@@ -89,7 +88,7 @@ void takeWeight() {
 	taskWeight.updateCache();
 }
 
-void connectWifi() {
+void connectWifi(bool reconnect) {
 	taskConnectWiFi.pause();
 	if (String(CORE->getSSID()).length() == 0) {
 		WiFi.setAutoConnect(false);
@@ -99,19 +98,20 @@ void connectWifi() {
 	if (WiFi.SSID().equals(CORE->getSSID())) {
 		WiFi.begin();
 		return;
-	}
+	}	
 	WiFi.disconnect(false);
 	/*!  */
 	int n = WiFi.scanComplete();
 	if (n == -2) {
 		WiFi.scanNetworks(true);
+		browserServer.scanNetworksAsync(connectNetwork);
 	}
 	else if (n > 0) {
 		connectNetwork(n);
 	}
 }
 void onScanResultDone(WiFiEvent_t event, WiFiEventInfo_t info) {
-	connectNetwork(info.scan_done.number);	
+	browserServer.scanDone(info.scan_done.number);
 }
 
 
@@ -131,7 +131,7 @@ void loop() {
 	//ESP.wdtFeed();
 	taskController.run();	
 	//DNS
-	//dnsServer.processNextRequest();
+	dnsServer.processNextRequest();
 	//HTTP
 		
 }

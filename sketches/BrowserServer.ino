@@ -39,6 +39,7 @@ BrowserServerClass::BrowserServerClass(uint16_t port) : AsyncWebServer(port) {}
 
 BrowserServerClass::~BrowserServerClass(){}	
 
+std::function<void(int)> BrowserServerClass::_onComplete;
 
 void BrowserServerClass::begin(){
 	/* Setup the DNS server redirecting all the domains to the apIP */	
@@ -84,7 +85,7 @@ void BrowserServerClass::init(){
 		AsyncWebServerResponse *response = request->beginResponse_P(200, "image/png", favicon_png, favicon_png_len);
 		request->send(response);
 	});*/	
-	on("/battery.png",handleBatteryPng);
+	on("/bat.png",handleBatteryPng);
 	on("/scales.png",handleScalesPng);	
 	on("/und.png",[](AsyncWebServerRequest * request) {
 		AsyncWebServerResponse *response = request->beginResponse_P(200,F("image/png"), und_png, und_png_len) ;
@@ -120,8 +121,11 @@ void BrowserServerClass::init(){
 	onNotFound([](AsyncWebServerRequest *request){
 		request->send(404);
 	});
+	//onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {		
+	//	request->send(404);
+	//});
 	dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-	dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
+	dnsServer.start(DNS_PORT, CORE->getHostname(), WiFi.softAPIP());
 	AsyncWebServer::begin();   // Web server start
 }
 
@@ -148,6 +152,17 @@ bool BrowserServerClass::isAuthentified(AsyncWebServerRequest * request){
 	return true;
 }
 
+void BrowserServerClass::scanNetworksAsync(std::function<void(int)> onComplete) {
+	_onComplete = onComplete;
+	WiFi.scanNetworks(true);	
+};
+
+void BrowserServerClass::scanDone(int scanCount){
+	_onComplete(scanCount);
+	_onComplete = nullptr;
+}
+
+
 void handleSettings(AsyncWebServerRequest * request){
 	if (!browserServer.isAuthentified(request))
 		return request->requestAuthentication();
@@ -155,10 +170,7 @@ void handleSettings(AsyncWebServerRequest * request){
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject &root = jsonBuffer.createObject();
 	JsonObject& scale = root.createNestedObject(SCALE_JSON);
-	scale["id_auto"] = CoreMemory.eeprom.settings.autoIp;
-	scale["bat_max"] = CoreMemory.eeprom.settings.bat_max;
-	scale["id_pe"] = CoreMemory.eeprom.settings.power_time_enable;
-	scale["id_pt"] = CoreMemory.eeprom.settings.time_off;
+	scale["id_auto"] = CoreMemory.eeprom.settings.autoIp;		
 	scale["id_assid"] = CoreMemory.eeprom.settings.apSSID;
 	scale["id_n_admin"] = CoreMemory.eeprom.settings.scaleName;
 	scale["id_p_admin"] = CoreMemory.eeprom.settings.scalePass;
@@ -169,8 +181,8 @@ void handleSettings(AsyncWebServerRequest * request){
 	scale["id_key"] = String(CoreMemory.eeprom.settings.wKey);
 	
 	JsonObject& server = root.createNestedObject(SERVER_JSON);
-	server["id_host"] = String(CoreMemory.eeprom.settings.hostUrl);
-	server["id_pin"] = CoreMemory.eeprom.settings.hostPin;
+	server["id_host"] = String(CoreMemory.eeprom.cloud.hostUrl);
+	server["id_pin"] = CoreMemory.eeprom.cloud.hostPin;
 	
 	root.printTo(*response);
 	request->send(response);
@@ -203,7 +215,7 @@ void handleScaleProp(AsyncWebServerRequest * request){
 
 #ifdef HTML_PROGMEM
 	void handleBatteryPng(AsyncWebServerRequest * request){
-		AsyncWebServerResponse *response = request->beginResponse_P(200, "image/png", battery_png, battery_png_len);
+		AsyncWebServerResponse *response = request->beginResponse_P(200, "image/png", bat_png, bat_png_len);
 		request->send(response);
 	}
 
@@ -279,10 +291,10 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
 			#if !defined(DEBUG_WEIGHT_RANDOM)  && !defined(DEBUG_WEIGHT_MILLIS)
 				Scale.tare();
 			#endif 
-		}/*else if (strcmp(command, "scan") == 0) {
-			WiFi.scanNetworksAsync(printScanResult, true);
+		}else if (strcmp(command, "scan") == 0) {
+			browserServer.scanNetworksAsync(printScanResult);
 			return;
-		}*/else if (strcmp(command, "binfo") == 0) {
+		}else if (strcmp(command, "binfo") == 0) {
 			BATTERY->doInfo(json);
 		}else {
 			return;

@@ -27,6 +27,7 @@ void CoreClass::begin(){
 	//Rtc.Begin();
 	CoreMemory.init();
 	_settings = &CoreMemory.eeprom.settings; //ссылка на переменную 
+	_cloud = &CoreMemory.eeprom.cloud;  //ссылка на переменную
 	_hostname = String(_settings->apSSID);
 	_hostname.toLowerCase();
 	if (!isAuto()) {
@@ -88,8 +89,8 @@ void CoreClass::handleRequest(AsyncWebServerRequest *request){
 			return;
 		}*/
 		if (request->hasArg("host")){
-			request->arg("host").toCharArray(_settings->hostUrl, request->arg("host").length()+1);
-			_settings->hostPin = request->arg("pin").toInt();
+			request->arg("host").toCharArray(_cloud->hostUrl, request->arg("host").length()+1);
+			_cloud->hostPin = request->arg("pin").toInt();
 			request->arg("n_admin").toCharArray(_settings->scaleName,request->arg("n_admin").length()+1);
 			request->arg("p_admin").toCharArray(_settings->scalePass,request->arg("p_admin").length()+1);
 			goto save;
@@ -201,12 +202,12 @@ String CoreClass::getIp(){
 
 /* */	
 bool CoreClass::eventToServer(const String& date, const String& type, const String& value){
-	if(_settings->hostPin == 0)
+	if(_cloud->hostPin == 0)
 		return false;
 	HTTPClient http;
 	String message = "http://";
-	message += _settings->hostUrl;
-	String hash = getHash(_settings->hostPin, date, type, value);	
+	message += _cloud->hostUrl;
+	String hash = getHash(_cloud->hostPin, date, type, value);	
 	message += "/scales.php?hash=" + hash;
 	http.begin(message);
 	http.setTimeout(TIMEOUT_HTTP);

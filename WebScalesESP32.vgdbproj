@@ -173,7 +173,7 @@
           <InterfaceID>jlink</InterfaceID>
           <InterfaceSerialNumber>004294967295</InterfaceSerialNumber>
           <Configuration xsi:type="com.visualgdb.edp.openocd.settings.esp32">
-            <CommandLine>-f interface/jlink.cfg -c "adapter_khz 10000" -f target/esp32.cfg</CommandLine>
+            <CommandLine>-f interface/jlink.cfg -c "adapter_khz 500000" -f target/esp32.cfg</CommandLine>
             <ExtraParameters>
               <Frequency xsi:nil="true" />
               <BoostedFrequency xsi:nil="true" />
@@ -230,7 +230,7 @@
             </KeyValue>
             <KeyValue>
               <Key>FlashMode</Key>
-              <Value>dout</Value>
+              <Value>qio</Value>
             </KeyValue>
             <KeyValue>
               <Key>FlashFreq</Key>

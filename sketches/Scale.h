@@ -17,7 +17,7 @@
 
 #define DOUT_PIN		33
 #define SCK_PIN			32
-#define RATE_PIN		12
+#define RATE_PIN		25
 
 #define PAGE_FILE			"/calibr.html"
 #define CDATE_FILE			"/cdate.json"

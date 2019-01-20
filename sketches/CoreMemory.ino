@@ -16,10 +16,7 @@ void CoreMemoryClass::init(){
 		get(0, eeprom);
 	}else{
 		doDefault();	
-	}*/
-	if (String(eeprom.settings.apSSID).length() == 0){
-		doDefault();
-	}
+	}*/	
 }
 
 bool CoreMemoryClass::save(){
@@ -36,10 +33,10 @@ bool CoreMemoryClass::doDefault(){
 	u.toCharArray(eeprom.settings.scaleName, u.length()+1);
 	p.toCharArray(eeprom.settings.scalePass, p.length()+1);
 	apSsid.toCharArray(eeprom.settings.apSSID, apSsid.length() + 1);
-	eeprom.settings.bat_max = MAX_CHG;
-	eeprom.settings.bat_min = MIN_CHG;
-	eeprom.settings.time_off = 600000;
-	eeprom.settings.hostPin = 0;
+	eeprom.battery.bat_max = MAX_CHG;
+	eeprom.battery.bat_min = MIN_CHG;
+	eeprom.cloud.time_off = 600000;
+	eeprom.cloud.hostPin = 0;
 	eeprom.settings.autoIp = true;	
 	
 	eeprom.scales_value.accuracy = 1;

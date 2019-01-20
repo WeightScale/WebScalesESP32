@@ -10,7 +10,7 @@
 #include <ArduinoJson.h>
 #include "Core.h"
 
-#define MAX_WEBSOCKET_CLIENT		4
+#define MAX_WEBSOCKET_CLIENT		10
 
 #define SECRET_FILE "/secret.json"
 #define TEXT_HTML	"text/html"
@@ -25,10 +25,12 @@ typedef struct {
 
 class AsyncWebServer;
 
+
 class BrowserServerClass : public AsyncWebServer{
 	protected:
 		strHTTPAuth _httpAuth;	
-		//bool _downloadHTTPAuth();		
+		//bool _downloadHTTPAuth();	
+		static std::function<void(int)> _onComplete;
 
 	public:
 	
@@ -41,6 +43,8 @@ class BrowserServerClass : public AsyncWebServer{
 		String getName(){ return _httpAuth.wwwUsername;};
 		String getPass(){ return _httpAuth.wwwPassword;};
 		void stop(){_server.end();};
+		void scanNetworksAsync(std::function<void(int)> onComplete);
+		void scanDone(int);
 		
 };
 
