@@ -1,0 +1,45 @@
+<!-- Add this file to source control in order to automatically restore library dependencies when opening the project on another machine -->
+<ArduinoDependencyCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Dependencies>
+    <Dependency>
+      <Type>Platform</Type>
+      <Key>
+        <Packager>esp32</Packager>
+        <Name>esp32</Name>
+        <Version>1.0.4</Version>
+      </Key>
+    </Dependency>
+    <Dependency>
+      <Type>Library</Type>
+      <Key>
+        <Packager>Me-No-Dev</Packager>
+        <Name>ESP Async WebServer</Name>
+        <Version>1.2.3</Version>
+      </Key>
+    </Dependency>
+    <Dependency>
+      <Type>Library</Type>
+      <Key>
+        <Packager>Me-No-Dev</Packager>
+        <Name>AsyncTCP</Name>
+        <Version>1.1.1</Version>
+      </Key>
+    </Dependency>
+    <Dependency>
+      <Type>Library</Type>
+      <Key>
+        <Packager>Benoit Blanchon &lt;blog.benoitblanchon.fr&gt;</Packager>
+        <Name>ArduinoJson</Name>
+        <Version>5.13.5</Version>
+      </Key>
+    </Dependency>
+    <Dependency>
+      <Type>Library</Type>
+      <Key>
+        <Packager>Matej Sychra</Packager>
+        <Name>ESP32httpUpdate</Name>
+        <Version>2.1.145</Version>
+      </Key>
+    </Dependency>
+  </Dependencies>
+</ArduinoDependencyCollection>

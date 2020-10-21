@@ -30,10 +30,10 @@
         }
     </style>
     <script>
-        var d = document,w=null,map = new Map();
-        
+        let d = document, w = null, map = new Map();
+
         function validate(form) {
-            var e = form.elements;
+            let e = form.elements;
             if(e.bmax.disabled){
                 e.bmax.disabled = false;
                 e.bmin.disabled = false;
@@ -56,7 +56,7 @@
         }
         
         function ScalesSocket(h, p,fo,fm, fe) {
-            var host = h,protocol = p,tw,ts, ws;
+            let host = h, protocol = p, tw, ts, ws;
             this.snd = function(c) {
                 ws.send(c);
             };

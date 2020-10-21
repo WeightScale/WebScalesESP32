@@ -1,13 +1,5 @@
-#ifndef _HX711_h
-#define _HX711_h
-
-#if ARDUINO >= 100
-	#include "Arduino.h"
-#else
-	#include "WProgram.h"
-#endif
-
 #pragma once
+#include "Arduino.h"
 /*
 * Implements a simple linear recursive exponential filter.
 * See: http://www.statistics.com/glossary&term_id=756 */
@@ -47,6 +39,24 @@ class HX711 : public ExponentialFilter<long> {
 		byte DOUT;		// Serial Data Output Pin
 		byte GAIN;		// amplification factor
 		bool pinsConfigured;
+		uint8_t _shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder) {
+			uint8_t value = 0;
+			uint8_t i;
+
+			for (i = 0; i < 8; ++i) {
+				digitalWrite(clockPin, HIGH);
+				ets_delay_us(1);
+				//delayMicroseconds(1);
+				if (bitOrder == LSBFIRST)
+					value |= digitalRead(dataPin) << i;
+				else
+					value |= digitalRead(dataPin) << (7 - i);
+				digitalWrite(clockPin, LOW);
+				//delayMicroseconds(1);
+				ets_delay_us(1);
+			}
+			return value;
+		}
 
 	public:
 		// define clock and data pin, channel, and gain factor
@@ -78,9 +88,9 @@ class HX711 : public ExponentialFilter<long> {
 			byte filler = 0x00;
 
 			// pulse the clock pin 24 times to read the data
-			data[2] = shiftIn(DOUT, PD_SCK, MSBFIRST);
-			data[1] = shiftIn(DOUT, PD_SCK, MSBFIRST);
-			data[0] = shiftIn(DOUT, PD_SCK, MSBFIRST);
+			data[2] = _shiftIn(DOUT, PD_SCK, MSBFIRST);
+			data[1] = _shiftIn(DOUT, PD_SCK, MSBFIRST);
+			data[0] = _shiftIn(DOUT, PD_SCK, MSBFIRST);
 
 			// set the channel and the gain factor for the next reading using the clock pin
 			for (unsigned int i = 0; i < GAIN; i++) {
@@ -99,11 +109,3 @@ class HX711 : public ExponentialFilter<long> {
 			power_up();
 		};
 };
-
-#endif /* HX711_h */
-
-
-
-
-
-

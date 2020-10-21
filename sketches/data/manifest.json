@@ -6,6 +6,11 @@
       "src": "/scales.png",
       "type": "image/png",
       "sizes": "52x52"
+    },
+    {
+      "src": "/scales-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": "/",

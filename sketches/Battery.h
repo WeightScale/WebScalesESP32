@@ -1,11 +1,10 @@
-#ifndef _BATTERY_
-#define _BATTERY_
+#pragma once
 #include <Arduino.h>
-#include <functional>
-#include "CoreMemory.h"
+#include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
 #include "Task.h"
 
-//#define DEBUG_BATTERY		/*Äëÿ òåñòà*/
+//#define DEBUG_BATTERY		/*Ð”Ð»Ñ Ñ‚ÐµÑÑ‚Ð°*/
 
 #define BATTERY_6V				6
 #define BATTERY_4V				4
@@ -16,7 +15,7 @@
 
 #define CHANEL					35
 
-/*Ïëàí ïèòàíèÿ îò áàòàðåè*/
+/*ÐŸÐ»Ð°Ð½ Ð¿Ð¸Ñ‚Ð°Ð½Ð¸Ñ Ð¾Ñ‚ Ð±Ð°Ñ‚Ð°Ñ€ÐµÐ¸*/
 #define PLAN_BATTERY			BATTERY_6V
 
 #define CONVERT_V_TO_ADC(v)		(((v * (R2_KOM /(R1_KOM + R2_KOM)))*ADC)/VREF)
@@ -37,25 +36,23 @@ class BatteryClass : public Task {
 protected:
 	bool _isDischarged = false;
 	unsigned int _charge;
-	battery_t *_battery;
-	//int _max;	/*Çíà÷åíèå àöï ìàêñèìàëüíîãî çàðÿä*/
-	//int _min;	/*Çíà÷åíèå àöï ìèíèìàëüíîãî çàðÿä*/
-	int _get_adc(byte times = 1);	
+	unsigned int _max; /*Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð°Ñ†Ð¿ Ð¼Ð°ÐºÑÐ¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ð³Ð¾ Ð·Ð°Ñ€ÑÐ´*/
+	unsigned int _min; /*Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð°Ñ†Ð¿ Ð¼Ð¸Ð½Ð¸Ð¼Ð°Ð»ÑŒÐ½Ð¾Ð³Ð¾ Ð·Ð°Ñ€ÑÐ´*/
+	unsigned int _get_adc(byte times = 1);	
 public:
 	BatteryClass();
 	~BatteryClass() {};
-	int fetchCharge();		
-	void setCharge(unsigned int ch){_charge = ch; };
-	unsigned int getCharge(){return _charge;};
-	void setMax(int m){_battery->bat_max = m; };	
-	void setMin(int m){_battery->bat_min = m; };	
-	int getMax(){return _battery->bat_max;};
-	int getMin(){return _battery->bat_min;};
+	unsigned int fetchCharge();		
+	void charge(unsigned int ch){_charge = ch; };
+	unsigned int charge(){return _charge;};
+	void max(unsigned int m){_max = m; };	
+	void min(unsigned int m){_min = m; };	
+	unsigned int max(){return _max;};
+	unsigned int min(){return _min;};
 	size_t doInfo(JsonObject& json);
+	size_t doData(JsonObject& json);
 	void handleBinfo(AsyncWebServerRequest *request);
-	bool isDischarged(){return _isDischarged;};	
+	bool isDischarged(){return _isDischarged;};
 };
 
 extern BatteryClass* BATTERY;
-
-#endif // !_BATTERY_

@@ -1,58 +1,89 @@
-html{
+html {
     background: #ffffff;
+    overflow-x: hidden;
 }
-body{
-    font-family: Arial, sans-serif;
-    width: 330px;
+body {
+    font-family: Calibri, sans-serif;
     height: auto;
-    margin-right: auto;
-    margin-left: auto;
+    margin-right: 10px;
+    margin-left: 10px;
     border: 10px solid #abc0df;
     background: #abc0df;
 }
-hr{
+
+hr {
     border: 2px;
     margin: 3px;
 }
-h1{
+
+h1 {
+  font-size: 6vw;
+  margin: auto;
+}
+h2,h4,h5 {
     margin: auto;
 }
-h2{
-    margin: auto;
-}
-h4,h5{
-    margin: auto;
-}
-fieldset{
+
+fieldset {
     background: #abc0df;
     border: 0px;
-    box-shadow: 1px 4px 8px 0px #585858;
+    box-shadow: 1px 4px 8px 1px #585858;
 }
-#brand_name{
-    color: #2E2E2E;
+
+#brand_name {
+    color: #747474;
     text-align: right;
 }
-img{
-    width:auto;
-    height:30px;
+
+img {
+    width: 10vw;
+    height: auto;
 }
-footer{
-    font-family: Arial, sans-serif;
-    font-size: small;
+
+footer {
+    font-size: 3vw;
+    text-align: center;
 }
-.btn, .btn:link, .btn:visited {
+
+.btn,
+.btn:link,
+.btn:visited {
     display: inline-block;
     text-decoration: none;
     text-transform: uppercase;
 }
-.btn:hover, .btn:focus {
+
+.btn:hover,
+.btn:focus {
     color: white;
 }
+
 .btn--s {
     padding: 0.5em;
-    box-shadow: 1px 4px 8px 0px #585858;
-}
-.btn--blue:hover, .btn--blue:focus {
-    background-color: #96a6c1;
+    box-shadow: 1px 4px 8px 0 #585858;
 }
 
+.btn--blue:hover,
+.btn--blue:focus {
+    background-color: #96a6c1;
+}
+summary,strong{
+    font-size: 5vw;
+}
+@media (min-width: 640px){
+    body{
+        width: 600px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+    summary,strong{font-size: 32px;}
+    h1{
+      font-size: 38px;  
+    }
+    img{
+        width: 65px;
+    }
+    footer{
+        font-size: 19px;
+    }
+}

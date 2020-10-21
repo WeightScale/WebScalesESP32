@@ -1,25 +1,6 @@
-// Tasks.h
-
-#ifndef _TASK_h
-#define _TASK_h
+#pragma once
 #include <Arduino.h>
 #include <functional>
-/*
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
-#else
-	#include "WProgram.h"
-#endif*/
-
-#include <inttypes.h>
-
-/*
-	Uncomment this line to enable TaskName Strings.
-
-	It might be usefull if you are loging thread with Serial,
-	or displaying a list of threads...
-*/
-// #define USE_TASK_NAMES	1
 
 class Task{
 	typedef std::function<void(void)> TaskFunction;
@@ -45,9 +26,6 @@ protected:
 
 	// Default is to mark it runned "now"
 	void runned() { runned(millis()); }
-
-	// Callback for run() if not implemented
-	//void (*_onRun)(void);
 	TaskFunction _onRun;		
 
 public:
@@ -65,7 +43,7 @@ public:
 	Task();
 	Task(unsigned long _interval = 0);
 	Task(void (*callback)(void) = NULL, unsigned long _interval = 0);
-
+	virtual ~Task() {};
 	// Set the desired interval for calls, and update _cached_next_run
 	virtual void setInterval(unsigned long _interval);
 
@@ -75,8 +53,7 @@ public:
 	// Default is to check whether it should run "now"
 	bool shouldRun() { return shouldRun(millis()); }
 
-	// Callback set
-	//void onRun(void (*callback)(void));
+	// Callback set	
 	void onRun(TaskFunction callback){_onRun = callback;};
 
 	/// Запуск
@@ -86,7 +63,3 @@ public:
 	void pause(){_paused = true;};
 	void updateCache(){runned();}
 };
-
-#endif
-
-

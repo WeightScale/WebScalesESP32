@@ -77,7 +77,6 @@
                 ws.onmessage = function(e) {
                     fm(JSON.parse(e.data));
                 }
-
             };
         }
 
@@ -86,14 +85,14 @@
         }
 
         function setMax() {
-            var f = new FormData(d.getElementById('form_c_id'));
+            let f = new FormData(d.getElementById('form_c_id'));
             f.append('update', true);
-            var r = new XMLHttpRequest();
+            let r = new XMLHttpRequest();
             r.onreadystatechange = function() {
                 if (r.readyState === 4) {
                     if (r.responseText !== null) {
                         cz = d.getElementById('form_zero');
-                        if(!cz.disabled){                            
+                        if(!cz.disabled){
                             if (cz.style.display === "none") {
                                 d.getElementById("id_bs").value = 'ОБНОВИТЬ';
                                 cz.style.display = "table";
@@ -126,10 +125,10 @@
         }
 
         function setWeight() {
-            var fd = new FormData();
-            var w = parseFloat(d.getElementById('id_cal_wt').value) + parseFloat(d.getElementById('gr_id').value);
+            let fd = new FormData();
+            let w = parseFloat(d.getElementById('id_cal_wt').value) + parseFloat(d.getElementById('gr_id').value);
             fd.append('weightCal', w.toString());
-            var r = new XMLHttpRequest();
+            let r = new XMLHttpRequest();
             r.onreadystatechange = function() {
                 if (r.readyState === 4) {
                     if (r.status === 200) {
@@ -192,13 +191,13 @@
         }
 
         function saveValue() {
-            var f = new FormData(d.getElementById('form_c_id'));
+            let f = new FormData(d.getElementById('form_c_id'));
             f.append('update', true);
-            var r = new XMLHttpRequest();
+            let r = new XMLHttpRequest();
             r.onreadystatechange = function() {
                 if (r.readyState === 4) {
                     if (r.status === 200) window.open('/', '_self');
-                    else if (r.status === 400) {
+                    else if (r.status === 204) {
                         if (confirm('Настройки не изменились. Выйти?')) {
                             window.open('/', '_self');
                         }
@@ -243,7 +242,7 @@
                             d.getElementById('wt_id').setAttribute('style', 'background: #fff;');
                         }
                         try {
-                            var dif_gr = parseFloat(d.getElementById('id_cal_wt').value) + parseFloat(d.getElementById('gr_id').value);
+                            let dif_gr = parseFloat(d.getElementById('id_cal_wt').value) + parseFloat(d.getElementById('gr_id').value);
                             dif_gr -= weight;
                             d.getElementById('dif_gr_id').innerHTML = dif_gr.toFixed(d.getElementById('ac_id').value);
                         } catch (e) {}
@@ -269,13 +268,13 @@
     <form id='form_c_id' action='javascript:setMax()'>
         <table>
             <tr>
-                <td>Точность измерения</td>
+                <td style="width: 100%;">Точность измерения</td>
                 <td>
                     <select id='ac_id' name='weightAccuracy' title='Знак после запятой'>
-                        <option name='0' value='0'>0</option>
-                        <option name='0.0' value='1'>0.0</option>
-                        <option name='0.00' value='2'>0.00</option>
-                        <option name='0.000' value='3'>0.000</option>
+                        <option value='0'>0</option>
+                        <option value='1'>0.0</option>
+                        <option value='2'>0.00</option>
+                        <option value='3'>0.000</option>
                     </select>
                 </td>
             </tr>
@@ -283,12 +282,12 @@
                 <td>Шаг измерения</td>
                 <td>
                     <select id='st_id' name='weightStep' title='Дискретность измерения'>
-                        <option name='шаг 1' value='1'>1</option>
-                        <option name='шаг 2' value='2'>2</option>
-                        <option name='шаг 5' value='5'>5</option>
-                        <option name='шаг 10' value='10'>10</option>
-                        <option name='шаг 20' value='20'>20</option>
-                        <option name='шаг 50' value='50'>50</option>
+                        <option value='1'>1</option>
+                        <option value='2'>2</option>
+                        <option value='5'>5</option>
+                        <option value='10'>10</option>
+                        <option value='20'>20</option>
+                        <option value='50'>50</option>
                     </select>
                 </td>
             </tr>
@@ -305,24 +304,50 @@
                 <td>Фильтр</td>
                 <td>
                     <select id='fl_id' name='weightFilter' title='Фильтр. Меньше значение больше фильтрация'>
-                        <option name='5%' value='5'>5 %</option>
-                        <option name='10%' value='10'>10 %</option>
-                        <option name='20%' value='20'>20 %</option>
-                        <option name='30%' value='30'>30 %</option>
-                        <option name='40%' value='40'>40 %</option>
-                        <option name='50%' value='50'>50 %</option>
-                        <option name='60%' value='60'>60 %</option>
-                        <option name='70%' value='70'>70 %</option>
-                        <option name='80%' value='80'>80 %</option>
-                        <option name='90%' value='90'>90 %</option>
-                        <option name='100%' value='100'>100 %</option>
+                        <option value='5'>5 %</option>
+                        <option value='10'>10 %</option>
+                        <option value='20'>20 %</option>
+                        <option value='30'>30 %</option>
+                        <option value='40'>40 %</option>
+                        <option value='50'>50 %</option>
+                        <option value='60'>60 %</option>
+                        <option value='70'>70 %</option>
+                        <option value='80'>80 %</option>
+                        <option value='90'>90 %</option>
+                        <option value='100'>100 %</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <td>НВП</td>
                 <td>
-                    <input title='Максимальный вес' type='number' min='1' max='100000' id='mw_id' name='weightMax' placeholder='Найбольший предел'> </td>
+                    <input title='Максимальный вес' type='number' step='any' max='100000' id='mw_id' name='weightMax' placeholder='Найбольший предел'> </td>
+            </tr>
+            <tr>
+                <td>Ноль ручной</td>
+                <td>
+                    <select id='zm_id' name='zm_range' title='Ручная установка ноля процент от НВП'>
+                        <option value='0.02'>2 %</option>
+                        <option value='0.04'>4 %</option>
+                        <option value='0.1'>10 %</option>
+                        <option value='0.2'>20 %</option>
+                        <option value='0.5'>50 %</option>
+                        <option value='1'>100 %</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Ноля при включении</td>
+                <td>
+                    <select id='zo_id' name='zo_range' title='Установка ноля при включении процент от НВП'>
+                        <option value='0.02'>2 %</option>
+                        <option value='0.04'>4 %</option>
+                        <option value='0.1'>10 %</option>
+                        <option value='0.2'>20 %</option>
+                        <option value='0.5'>50 %</option>
+                        <option value='1'>100 %</option>
+                    </select>
+                </td>
             </tr>
             <tr>
                 <td><a href='javascript:saveValue();'>сохранить и выйти</a></td>

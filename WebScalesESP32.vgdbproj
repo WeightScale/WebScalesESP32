@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VisualGDBProjectSettings2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <ConfigurationName>Debug</ConfigurationName>
+  <ConfigurationName>Release</ConfigurationName>
   <Project xsi:type="com.visualgdb.project.external.arduino">
     <CustomSourceDirectories>
       <Directories />
@@ -16,15 +16,6 @@
         <Subfolders />
         <Files>
           <string>WebScalesESP32.ino</string>
-          <string>Core.ino</string>
-          <string>Scale.ino</string>
-          <string>Task.ino</string>
-          <string>TaskController.ino</string>
-          <string>tools.ino</string>
-          <string>BrowserServer.ino</string>
-          <string>CoreMemory.ino</string>
-          <string>HttpUpdater.ino</string>
-          <string>Battery.ino</string>
         </Files>
       </RootSketchFolder>
       <OtherFiles>
@@ -45,8 +36,11 @@
     </ProjectModeSettings>
   </Project>
   <Build xsi:type="com.visualgdb.build.external.arduino">
+    <BuildLogMode xsi:nil="true" />
+    <IgnoreNormalLibraryDirectories>false</IgnoreNormalLibraryDirectories>
     <OutputSubdirectory>Output\$(PlatformName.defuse)\$(ConfigurationName.defuse)</OutputSubdirectory>
     <EnableVerboseBuild>false</EnableVerboseBuild>
+    <PreprocessorMacros />
   </Build>
   <CustomBuild>
     <PreSyncActions />
@@ -131,13 +125,9 @@
   </CodeSense>
   <Configurations>
     <VisualGDBConfiguration>
-      <PlatformName>ESP32 Dev Module</PlatformName>
+      <PlatformName>ESP32_Dev_Module</PlatformName>
       <DebugSettingsOverride xsi:type="com.visualgdb.debug.embedded">
-        <AdditionalStartupCommands>
-          <GDBPreStartupCommands />
-          <GDBStartupCommands />
-          <GDBFinalizationCommands />
-        </AdditionalStartupCommands>
+        <AdditionalStartupCommands />
         <AdditionalGDBSettings>
           <Features>
             <DisableAutoDetection>false</DisableAutoDetection>
@@ -167,13 +157,14 @@
           <EnableAsyncExecutionMode>false</EnableAsyncExecutionMode>
           <EnableNonStopMode>false</EnableNonStopMode>
           <MaxBreakpointLimit>0</MaxBreakpointLimit>
+          <EnableVerboseMode>true</EnableVerboseMode>
         </AdditionalGDBSettings>
         <DebugMethod>
           <ID>openocd</ID>
           <InterfaceID>jlink</InterfaceID>
           <InterfaceSerialNumber>004294967295</InterfaceSerialNumber>
           <Configuration xsi:type="com.visualgdb.edp.openocd.settings.esp32">
-            <CommandLine>-f interface/jlink.cfg -c "adapter_khz 500000" -f target/esp32.cfg</CommandLine>
+            <CommandLine>-f interface/jlink.cfg -c "adapter_khz 1000000" -f target/esp32.cfg</CommandLine>
             <ExtraParameters>
               <Frequency xsi:nil="true" />
               <BoostedFrequency xsi:nil="true" />
@@ -191,18 +182,19 @@
             <ProgramFLASHUsingExternalTool>false</ProgramFLASHUsingExternalTool>
             <PreferredGDBPort>0</PreferredGDBPort>
             <PreferredTelnetPort>0</PreferredTelnetPort>
+            <AlwaysPassSerialNumber>false</AlwaysPassSerialNumber>
             <SuggestionLogicRevision>1</SuggestionLogicRevision>
             <CheckFLASHSize>true</CheckFLASHSize>
             <FLASHSettings>
               <Size>size4MB</Size>
-              <Frequency>freq40M</Frequency>
-              <Mode>DOUT</Mode>
+              <Frequency>freq80M</Frequency>
+              <Mode>QIO</Mode>
             </FLASHSettings>
             <PatchBootloader>true</PatchBootloader>
           </Configuration>
         </DebugMethod>
         <AutoDetectRTOS>true</AutoDetectRTOS>
-        <SemihostingSupport>Disabled</SemihostingSupport>
+        <SemihostingSupport>Auto</SemihostingSupport>
         <SemihostingPollingDelay>0</SemihostingPollingDelay>
         <StepIntoEntryPoint>false</StepIntoEntryPoint>
         <ReloadFirmwareOnReset>false</ReloadFirmwareOnReset>
@@ -216,8 +208,7 @@
         <CheckInterfaceDrivers>true</CheckInterfaceDrivers>
       </DebugSettingsOverride>
       <BuildSettingsExtension xsi:type="com.visualgdb.build.external.arduino.extension">
-        <BoardID>espressif:esp32:esp32</BoardID>
-        <COMPort>COM6</COMPort>
+        <BoardID>esp32:esp32:esp32</BoardID>
         <Properties>
           <Entries>
             <KeyValue>
@@ -227,6 +218,10 @@
             <KeyValue>
               <Key>PartitionScheme</Key>
               <Value>default</Value>
+            </KeyValue>
+            <KeyValue>
+              <Key>CPUFreq</Key>
+              <Value>240</Value>
             </KeyValue>
             <KeyValue>
               <Key>FlashMode</Key>

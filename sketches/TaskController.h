@@ -1,19 +1,16 @@
-
-#ifndef _TASKCONTROLLER_H_
-#define _TASKCONTROLLER_H_
-
+#pragma once
 #include "Task.h"
-#include "inttypes.h"
+#include <StringArray.h>
 
-#define MAX_TASKS		15
+#define MAX_TASKS		10
 
 class TaskController: public Task{
 	protected:
-	Task* task[MAX_TASKS];
+	LinkedList<Task *> _tasks;
 	int cached_size;
 	public:
 	TaskController(unsigned long _interval = 0);
-
+	~TaskController() {_tasks.free();};
 	// run() Method is overrided
 	void run();
 
@@ -22,7 +19,6 @@ class TaskController: public Task{
 	bool add(Task* _task);
 
 	// remove the thread (given the Task* or TaskID)
-	void remove(int _id);
 	void remove(Task* _task);
 
 	// Removes all tasks
@@ -35,7 +31,3 @@ class TaskController: public Task{
 	// Returns NULL if none found
 	Task* get(int index);
 };
-
-
-#endif /* TASKCONTROLLER_H_ */
-

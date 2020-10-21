@@ -1,14 +1,12 @@
-#ifndef _VERSION_h
-#define _VERSION_h
+#pragma once
 #include "webconfig.h"
 
-#define SKETCH_VERSION "web_scales_esp32.001"
+#define SKETCH_VERSION "web_scales_esp32.002"
 #define SPIFFS_VERSION SKETCH_VERSION
 
 
 
-/*
-Формат файла
+/* Формат файла
 
 [имя].[версия].[тип].[расширение]
 
@@ -55,7 +53,4 @@
 
     // track these headers
     http.collectHeaders(headerkeys, headerkeyssize);
-
 */
-
-#endif //_VERSION_h
